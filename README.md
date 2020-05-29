@@ -2,6 +2,11 @@
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 9.1.5.
 
+
+## Functionalities Added
+
+Adding Contact Details with multiple contact Numbers and multiple emails  ,Editing Contact, Added Pagination Functionalities,Search by Name and Deleting Contact 
+
 ## Development server
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
