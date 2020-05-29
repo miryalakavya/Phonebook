@@ -1,1 +1,28 @@
 /* You can add global styles to this file, and also import other style files */
+
+body {
+    width: 100vw;
+}
+
+.bg-lavender {
+    background-color: rgb(207, 226, 243);
+}
+
+.header {
+    height: 35px;
+}
+
+.content {
+    padding-top: 35px;
+}
+
+.accordion {
+    border-bottom: 2px solid lightblue;
+    border-left: 2px solid lightblue;
+    border-right: 2px solid lightblue;
+    border-top: 2px solid lightblue;
+}
+
+.border-bootom-lavender {
+    border-bottom: 2px solid lightblue;
+}

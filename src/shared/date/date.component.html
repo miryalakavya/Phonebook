@@ -1,0 +1,2 @@
+<input type="date" id="input" class="form-control" mdbInput [(ngModel)]="inputDate" [max]="getCalendarInputDateFormat(maxDate)" [min]="getCalendarInputDateFormat(minDate)" (input)="validateDate()" (blur)="validateDate()" [disabled]="disable">
+<div class="error" *ngIf="!dateValidity">{{dateInvalidMessage}}</div>
