@@ -18,6 +18,7 @@ export class AppComponent {
   isRegisterOrEdit = false;
 
   public contact = {
+    _id: null,
     name: '',
     email: [],
     contactNumber: [],
@@ -30,6 +31,7 @@ export class AppComponent {
   baseUrl = 'https://phone-book-app-node.herokuapp.com';
   startIndex: number;
   showContactDetailsIndex: any;
+  contactsList: any[];
   constructor(private httpSerice: HttpClient) {
 
   }
@@ -38,12 +40,13 @@ export class AppComponent {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
   };
 
-  public paginationItems = 3;
+  public paginationItems = 4;
 
   ngOnInit() {
 
     this.httpSerice.get(this.baseUrl + '/contact', { headers: this.httpOptions.headers }).subscribe((result: any) => {
       this.contacts = result.data;
+      this.contactsList = result.data;
       const page = Math.ceil(this.contacts.length / this.paginationItems);
       for (let i = 0; i < page; i++) {
         this.numberOfPages.push(i + 1);
@@ -55,6 +58,22 @@ export class AppComponent {
 
   searchContacts(event) {
     this.searchValue = event;
+    if (event.length === 0) {
+      this.contacts = this.contactsList;
+      const page = Math.ceil(this.contacts.length / this.paginationItems);
+      for (let i = 0; i < page; i++) {
+        this.numberOfPages.push(i + 1);
+      }
+      this.startIndex = 0;
+    } else {
+      this.contacts=this.contactsList.filter(contact => {
+        const name = contact.name.includes(this.searchValue);
+        if (name) {
+          return true;
+        }
+      });
+    }
+
   }
 
   showContactDetails(contact, id) {
@@ -62,7 +81,7 @@ export class AppComponent {
     if (this.showContactDetailsIndex) {
       this.contacts[this.showContactDetailsIndex - 1].showContactDetails = false;
     }
-    if(id + this.startIndex + 1 !== this.showContactDetails) {
+    if (id + this.startIndex + 1 !== this.showContactDetails) {
       this.showContactDetailsIndex = id + this.startIndex + 1;
     }
 
@@ -71,6 +90,7 @@ export class AppComponent {
   showEditDialog(contact) {
     this.isRegisterOrEdit = true;
     this.contact = {
+      _id: contact._id,
       name: contact.name,
       email: contact.email,
       contactNumber: contact.contactNumber,
@@ -80,7 +100,7 @@ export class AppComponent {
   }
 
   deleteContact(contact) {
-    this.httpSerice.get(this.baseUrl + '/contact/' + contact._id, { headers: this.httpOptions.headers }).subscribe((result: any) => {
+    this.httpSerice.delete(this.baseUrl + '/contact/' + contact._id, { headers: this.httpOptions.headers }).subscribe((result: any) => {
       const dataIndex = this.contacts.findIndex(x => x._id === contact._id);
       if (dataIndex != -1) {
         this.contacts.splice(dataIndex, 1);
@@ -91,6 +111,7 @@ export class AppComponent {
   registerUser() {
     this.isRegisterOrEdit = true;
     this.contact = {
+      _id: null,
       name: '',
       email: [''],
       contactNumber: [+91],
@@ -112,5 +133,25 @@ export class AppComponent {
 
   changeStartIndex(index) {
     this.startIndex = index * this.paginationItems;
+  }
+
+  submit() {
+    if (this.contact._id) {
+      this.httpSerice.put(this.baseUrl + '/contact', this.contact, { headers: this.httpOptions.headers }).subscribe((result: any) => {
+        this.contacts.push(result.data);
+      });
+    } else {
+      this.httpSerice.post(this.baseUrl + '/contact', this.contact, { headers: this.httpOptions.headers }).subscribe((result: any) => {
+        const dataIndex = this.contacts.findIndex(x => x._id === this.contact._id);
+        this.contact[dataIndex] = result.data;
+      });
+    }
+  }
+
+  removeEmail(contact, id) {
+    contact.email.splice(id, 1);
+  }
+  removeContact(contact, id) {
+    contact.contactNumber.splice(id, 1);
   }
 }

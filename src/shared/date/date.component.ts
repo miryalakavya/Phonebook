@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Optional, Output, EventEmitter, SimpleChanges, OnChanges } from '@angular/core';
-
+import * as moment from 'moment';
 @Component({
   selector: 'app-date',
   templateUrl: './date.component.html',
@@ -46,7 +46,7 @@ export class DateComponent implements OnInit {
   set selectedDate(value: Date) {
 
     if (!this.triggeredOutput && value) {
-      // this.inputDate = this.dateCalculateService.converToDateWithFormat(value, 'YYYY-MM-DD');
+      this.inputDate = this.converToDateWithFormat(value, 'YYYY-MM-DD');
     }
     if (this.triggeredOutput) {
       this.triggeredOutput = false;
@@ -64,30 +64,47 @@ export class DateComponent implements OnInit {
   ngOnInit() {
   }
 
+  converToDateWithFormat(date: Date, format: string) {
+    return moment(date).format(format);
+  }
+
+  convertStringToDateWithFormat(date: string, format: string) {
+    return new Date(moment(date, format).toString());
+  }
+
   getCalendarInputDateFormat(date) {
-    // return this.dateCalculateService.converToDateWithFormat(date, 'YYYY-MM-DD');
+    return this.converToDateWithFormat(date, 'YYYY-MM-DD');
+  }
+
+  convertStringToISODateFormat(date: string, format: string) {
+    const momentLocalDate = moment(date, format);
+    const dateInISOFormat = moment(momentLocalDate).format('YYYY-MM-DD');
+    return dateInISOFormat;
+  }
+
+  isValidDate(date: string) {
+    return moment(date).isValid();
   }
 
 
-
   validateDate() {
-    // const date = new Date(this.dateCalculateService.convertStringToISODateFormat(this.inputDate, 'YYYY-MM-DD'));
-    // if (this.dateCalculateService.isValidDate(this.inputDate)) {
-    //   // if input is in min and max range
+    const date = new Date(this.convertStringToISODateFormat(this.inputDate, 'YYYY-MM-DD'));
+    if (this.isValidDate(this.inputDate)) {
+      // if input is in min and max range
 
-    //   if (this.maxDate && !isNaN(this.maxDate.getTime()) && date.getTime() > new Date(this.maxDate).getTime()) {
-    //     this.dateValidity = false;
-    //   } else if (this.minDate && date.getTime() < new Date(this.minDate).getTime()) {
-    //     this.dateValidity = false;
-    //   } else {
-    //     this.dateValidity = true;
-    //   }
+      if (this.maxDate && !isNaN(this.maxDate.getTime()) && date.getTime() > new Date(this.maxDate).getTime()) {
+        this.dateValidity = false;
+      } else if (this.minDate && date.getTime() < new Date(this.minDate).getTime()) {
+        this.dateValidity = false;
+      } else {
+        this.dateValidity = true;
+      }
 
-    // } else {
-    //   this.dateValidity = false;
-    // }
-    // this.triggeredOutput = true;
-    // this.inputChanged.emit(date);
+    } else {
+      this.dateValidity = false;
+    }
+    this.triggeredOutput = true;
+    this.inputChanged.emit(date);
   }
 
 }
