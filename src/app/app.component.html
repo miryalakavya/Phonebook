@@ -5,7 +5,7 @@
 <div class="content" *ngIf="!isRegisterOrEdit">
     <app-search-input class="p-1" (inputChanged)="searchContacts($event)"></app-search-input>
     <div class=" px-1" *ngFor="let contact of contacts|slice:startIndex:(startIndex+paginationItems);let i=index">
-        <div class="accordion d-flex justify-content-between p-2 align-items-center" (click)="showContactDetails(contact,i)">
+        <div class="accordion d-flex justify-content-between p-2 align-items-center" id="{{i}}" [class.border-bootom-lavender]="(i===paginationItems-1) || ((startIndex+i)===contacts.length-1)" (click)="showContactDetails(contact,i)">
             <div class="flex-1">
                 {{contact.name}}
             </div>
