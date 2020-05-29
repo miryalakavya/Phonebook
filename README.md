@@ -2,6 +2,10 @@
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 9.1.5.
 
+## BACKEND CODE
+https://github.com/miryalakavya/RM_phonebook_backend.git
+
+Inorder to communicate with backed server I have deployed my backend in heroku and through the link I have created,updated,deleted the contacts
 
 ## Functionalities Added
 
