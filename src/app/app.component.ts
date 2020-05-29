@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-
+import * as moment from 'moment';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -51,6 +51,7 @@ export class AppComponent {
       for (let i = 0; i < page; i++) {
         this.numberOfPages.push(i + 1);
       }
+      this.showContactDetailsIndex = null;
       this.startIndex = 0;
     });
 
@@ -65,15 +66,25 @@ export class AppComponent {
         this.numberOfPages.push(i + 1);
       }
       this.startIndex = 0;
+
     } else {
-      this.contacts=this.contactsList.filter(contact => {
+      this.contacts = this.contactsList.filter(contact => {
         const name = contact.name.includes(this.searchValue);
         if (name) {
+          return true;
+        }
+        const email = contact.email.find(email => email.includes(this.searchValue));
+        if (email) {
+          return true;
+        }
+        const phoneNumber = contact.contactNumber.find(number => (number + '').includes(this.searchValue));
+        if (phoneNumber) {
           return true;
         }
       });
     }
 
+    this.showContactDetailsIndex = null;
   }
 
   showContactDetails(contact, id) {
@@ -81,8 +92,10 @@ export class AppComponent {
     if (this.showContactDetailsIndex) {
       this.contacts[this.showContactDetailsIndex - 1].showContactDetails = false;
     }
-    if (id + this.startIndex + 1 !== this.showContactDetails) {
+    if (contact.showContactDetails) {
       this.showContactDetailsIndex = id + this.startIndex + 1;
+    } else {
+      this.showContactDetailsIndex = 0;
     }
 
   }
@@ -118,6 +131,13 @@ export class AppComponent {
       dateOfBirth: null,
     };
   }
+
+
+  convertToDateFormat(date) {
+    const dateInISOFormat = moment(date).format('DD-MM-YYYY');
+    return dateInISOFormat;
+  }
+
   createEmptyEmail() {
     const emailLength = this.contact.email.length - 1;
     if (this.contact.email[emailLength].length > 0) {
@@ -136,14 +156,16 @@ export class AppComponent {
   }
 
   submit() {
-    if (this.contact._id) {
-      this.httpSerice.put(this.baseUrl + '/contact', this.contact, { headers: this.httpOptions.headers }).subscribe((result: any) => {
+    if (!this.contact._id) {
+      this.httpSerice.post(this.baseUrl + '/contact', this.contact, { headers: this.httpOptions.headers }).subscribe((result: any) => {
         this.contacts.push(result.data);
+        this.isRegisterOrEdit = false;
       });
     } else {
-      this.httpSerice.post(this.baseUrl + '/contact', this.contact, { headers: this.httpOptions.headers }).subscribe((result: any) => {
+      this.httpSerice.put(this.baseUrl + '/contact', this.contact, { headers: this.httpOptions.headers }).subscribe((result: any) => {
         const dataIndex = this.contacts.findIndex(x => x._id === this.contact._id);
         this.contact[dataIndex] = result.data;
+        this.isRegisterOrEdit = false;
       });
     }
   }
@@ -151,6 +173,7 @@ export class AppComponent {
   removeEmail(contact, id) {
     contact.email.splice(id, 1);
   }
+
   removeContact(contact, id) {
     contact.contactNumber.splice(id, 1);
   }

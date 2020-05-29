@@ -16,11 +16,11 @@
         border-right: 2px solid lightblue;" *ngIf="contact.showContactDetails">
             <div class="d-flex flex-row justify-content-between p-2">
                 <div class="flex-1">
-                    {{contact.dateOfBirth}}
+                    {{convertToDateFormat(contact.dateOfBirth)}}
                 </div>
                 <div>
                     <button type="button" class="btn btn-primary mx-2" (click)="showEditDialog(contact)">Edit</button>
-                    <button type="button" class="btn btn-danger mr-2" (click)="deleteContact(contact)">Cancel</button>
+                    <button type="button" class="btn btn-danger mr-2" (click)="deleteContact(contact)">Delete</button>
                 </div>
             </div>
             <div class="d-flex flex-row justify-content-between p-2">
@@ -65,8 +65,8 @@ height: 100vh;
                     <input type="text" class="form-control" id="name" placeholder="Enter name" [(ngModel)]="contact.name">
                 </div>
                 <div class="p-2">
-                    <div for="date">Date</div>
-                    <app-date [selectedDate]="contact.dateOfBirth" (inputChanged)="contact.dateOfBirth=$event" [min]="todaysDate">
+                    <div for="date">DOB</div>
+                    <app-date [selectedDate]="contact.dateOfBirth" (inputChanged)="contact.dateOfBirth=$event">
                     </app-date>
                 </div>
                 <div class="p-2">
